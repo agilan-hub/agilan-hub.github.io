@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agilan V — AI & Data Science</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #faf6ef;
+      --paper: #f2ece0;
+      --ink:   #1c1a17;
+      --rust:  #c0392b;
+      --gold:  #c8972a;
+      --sage:  #4a7c6f;
+      --muted: #7a7060;
+      --border:#d6cfc2;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,.025) 28px, rgba(0,0,0,.025) 29px);
+      opacity: .6;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--cream);
+      border-bottom: 2px solid var(--ink);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 6%;
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; color: var(--ink); }
+    .nav-logo span { color: var(--rust); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'IBM Plex Mono', monospace; font-size: .75rem; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--rust); }
+    .nav-badge {
+      font-family: 'IBM Plex Mono', monospace; font-size: .7rem;
+      background: var(--rust); color: #fff; padding: .3rem .8rem; border-radius: 2px;
+    }
+
+    #hero {
+      min-height: 100vh; padding: 10rem 6% 5rem;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; border-bottom: 2px solid var(--ink); z-index: 1;
+    }
+    .hero-vol {
+      font-family: 'IBM Plex Mono', monospace; font-size: .72rem;
+      letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem;
+    }
+    .hero-vol::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    h1 {
+      font-family: 'Playfair Display', serif; font-weight: 900;
+      font-size: clamp(4rem, 11vw, 9rem); line-height: .92; letter-spacing: -.03em;
+    }
+    h1 em { font-style: italic; color: var(--rust); }
+    h1 .ghost { -webkit-text-stroke: 2px var(--ink); color: transparent; }
+
+    .hero-byline { display: flex; align-items: flex-start; gap: 4rem; margin-top: 3rem; flex-wrap: wrap; }
+    .hero-desc { max-width: 440px; color: var(--muted); line-height: 1.8; font-size: 1rem; }
+    .hero-meta { display: flex; flex-direction: column; gap: 1rem; font-family: 'IBM Plex Mono', monospace; font-size: .75rem; color: var(--muted); }
+    .hero-meta span { display: flex; gap: .5rem; align-items: center; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); flex-shrink: 0; }
+
+    .hero-cta { display: flex; gap: 1rem; margin-top: 3.5rem; flex-wrap: wrap; }
+    .btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: .8rem; letter-spacing: .06em;
+      text-transform: uppercase; padding: .9rem 2rem; border-radius: 2px;
+      text-decoration: none; cursor: pointer; transition: transform .2s, box-shadow .2s; display: inline-block;
+    }
+    .btn:hover { transform: translate(-2px,-2px); }
+    .btn-primary { background: var(--ink); color: var(--cream); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--rust); }
+    .btn-primary:hover { box-shadow: 6px 6px 0 var(--rust); }
+    .btn-ghost { background: transparent; color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--border); }
+    .btn-ghost:hover { box-shadow: 6px 6px 0 var(--border); }
+
+    .hero-stamp {
+      position: absolute; bottom: 3rem; right: 6%;
+      width: 110px; height: 110px; border-radius: 50%;
+      border: 3px solid var(--rust);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-family: 'IBM Plex Mono', monospace; font-size: .6rem; letter-spacing: .12em;
+      color: var(--rust); text-transform: uppercase; text-align: center; line-height: 1.6;
+      animation: rotateSlow 20s linear infinite;
+    }
+    @keyframes rotateSlow { to { transform: rotate(360deg); } }
+
+    section { position: relative; z-index: 1; }
+    .section-head { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3.5rem; }
+    .section-num { font-family: 'IBM Plex Mono', monospace; font-size: .75rem; color: var(--rust); letter-spacing: .1em; }
+    h2 { font-family: 'Playfair Display', serif; font-weight: 900; font-size: clamp(2rem, 5vw, 3.2rem); letter-spacing: -.02em; }
+    h2 em { font-style: italic; color: var(--rust); }
+    .section-rule { flex: 1; height: 2px; background: var(--border); }
+
+    /* ABOUT */
+    #about { padding: 7rem 6%; border-bottom: 2px solid var(--ink); background: var(--paper); }
+    .about-layout { display: grid; grid-template-columns: 1fr 360px; gap: 6rem; align-items: start; }
+    .about-text p { color: var(--muted); line-height: 1.9; font-size: 1.05rem; margin-bottom: 1.4rem; }
+    .about-text strong { color: var(--ink); font-weight: 500; }
+    .pullquote {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: 1.4rem; color: var(--ink); line-height: 1.5;
+      border-left: 4px solid var(--rust); padding-left: 1.5rem; margin: 2rem 0;
+    }
+    .about-card { background: var(--cream); border: 2px solid var(--ink); border-radius: 4px; padding: 2rem; box-shadow: 6px 6px 0 var(--ink); }
+    .about-card-title { font-family: 'IBM Plex Mono', monospace; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; }
+    .stat-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: .9rem 0; }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-k { font-family: 'IBM Plex Mono', monospace; font-size: .78rem; color: var(--muted); }
+    .stat-v { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1rem; color: var(--rust); }
+
+    /* SKILLS */
+    #skills { padding: 7rem 6%; border-bottom: 2px solid var(--ink); }
+    .skills-list { display: flex; flex-direction: column; }
+    .skill-row {
+      display: grid; grid-template-columns: 240px 1fr auto;
+      align-items: center; gap: 2rem; padding: 1.6rem 0; border-bottom: 1px solid var(--border);
+      transition: background .2s, padding .2s;
+    }
+    .skill-row:hover { background: var(--paper); padding-left: 1rem; padding-right: 1rem; }
+    .skill-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.15rem; }
+    .skill-tools { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .pill { font-family: 'IBM Plex Mono', monospace; font-size: .7rem; padding: .25rem .7rem; border-radius: 2px; background: var(--paper); border: 1px solid var(--border); color: var(--muted); }
+    .skill-level { font-family: 'IBM Plex Mono', monospace; font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+    .level-adv { color: var(--sage); }
+    .level-int { color: var(--gold); }
+    .level-beg { color: var(--muted); }
+
+    /* CERTIFICATES */
+    #certs { padding: 7rem 6%; background: var(--paper); border-bottom: 2px solid var(--ink); }
+    .certs-group { margin-bottom: 3rem; }
+    .certs-group:last-child { margin-bottom: 0; }
+    .certs-group-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: .72rem;
+      letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;
+    }
+    .certs-group-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .cert-card {
+      background: var(--cream); border: 2px solid var(--ink); border-radius: 4px;
+      padding: 1.4rem 1.6rem; box-shadow: 4px 4px 0 var(--border);
+      transition: box-shadow .2s, transform .2s; display: flex; flex-direction: column; gap: .4rem;
+    }
+    .cert-card:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+    .cert-issuer { font-family: 'IBM Plex Mono', monospace; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--rust); }
+    .cert-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: .98rem; line-height: 1.3; }
+
+    /* PROJECTS */
+    #projects { padding: 7rem 6%; border-bottom: 2px solid var(--ink); }
+    .projects-list { display: flex; flex-direction: column; gap: 2rem; }
+    .project-item {
+      display: grid; grid-template-columns: 70px 1fr auto;
+      gap: 2rem; align-items: start; padding: 2rem 2.2rem; border: 2px solid var(--ink);
+      background: var(--cream); border-radius: 4px; box-shadow: 5px 5px 0 var(--border);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .project-item:hover { transform: translate(-3px,-3px); box-shadow: 8px 8px 0 var(--ink); }
+    .project-index { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2.2rem; color: var(--border); font-weight: 700; line-height: 1; padding-top: .2rem; }
+    .project-content h3 { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.3rem; margin-bottom: .5rem; }
+    .project-content p { color: var(--muted); line-height: 1.7; font-size: .93rem; margin-bottom: 1rem; }
+    .project-chips { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .chip-retro { font-family: 'IBM Plex Mono', monospace; font-size: .68rem; padding: .2rem .65rem; border: 1px solid var(--ink); border-radius: 2px; color: var(--ink); }
+    .project-arrow { font-size: 1.6rem; color: var(--border); text-decoration: none; align-self: center; transition: color .2s, transform .2s; }
+    .project-arrow:hover { color: var(--rust); transform: translateX(4px); }
+
+    /* CONTACT */
+    #contact { padding: 7rem 6%; z-index: 1; }
+    .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .contact-left p { color: var(--muted); line-height: 1.8; margin-bottom: 2rem; }
+    .contact-email-link {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: 1.5rem; color: var(--ink); text-decoration: none;
+      border-bottom: 3px solid var(--rust); padding-bottom: .2rem;
+      display: inline-block; margin-bottom: 2.5rem; transition: color .2s;
+    }
+    .contact-email-link:hover { color: var(--rust); }
+    .social-grid { display: flex; flex-direction: column; gap: .7rem; }
+    .social-link {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .9rem 1.2rem; border: 1px solid var(--border); text-decoration: none; color: var(--ink);
+      font-family: 'IBM Plex Mono', monospace; font-size: .8rem; border-radius: 2px;
+      transition: border-color .2s, background .2s;
+    }
+    .social-link:hover { border-color: var(--ink); background: var(--paper); }
+    .contact-right { background: var(--ink); color: var(--cream); padding: 2.5rem; border-radius: 4px; }
+    .contact-right h3 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; margin-bottom: 1.5rem; }
+    .contact-fact { padding: .8rem 0; border-bottom: 1px solid rgba(255,255,255,.1); font-family: 'IBM Plex Mono', monospace; font-size: .78rem; color: rgba(255,255,255,.5); }
+    .contact-fact:last-child { border-bottom: none; }
+    .contact-fact strong { color: var(--cream); }
+
+    footer {
+      background: var(--ink); color: rgba(255,255,255,.4);
+      padding: 1.5rem 6%; display: flex; align-items: center; justify-content: space-between;
+      font-family: 'IBM Plex Mono', monospace; font-size: .72rem; letter-spacing: .06em; z-index: 1; position: relative;
+    }
+    footer .f-name { color: var(--rust); }
+
+    @media (max-width: 860px) {
+      .about-layout, .contact-layout { grid-template-columns: 1fr; }
+      .skill-row { grid-template-columns: 1fr 1fr; }
+      .skill-level { display: none; }
+      .project-item { grid-template-columns: 55px 1fr; }
+      .project-arrow { display: none; }
+    }
+    @media (max-width: 580px) {
+      .nav-links, .nav-badge { display: none; }
+      .skill-row { grid-template-columns: 1fr; }
+      h1 { font-size: clamp(3rem, 14vw, 5rem); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Port<span>folio</span></div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#certs">Certs</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-badge">Open to Work</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <h1>
+    <em>Building</em><br>
+    <span class="ghost">Intelligent</span><br>
+    Systems.
+  </h1>
+  <div class="hero-byline">
+    <p class="hero-desc">AI & Data Science undergraduate with a passion for programming, data analysis, and machine learning. Building foundational skills and seeking opportunities to apply knowledge through real-world projects.</p>
+    <div class="hero-meta">
+      <span><div class="dot"></div> Based in Coimbatore, Tamil Nadu</span>
+      <span><div class="dot"></div> B.Tech AI & DS · SNS College of Technology</span>
+      <span><div class="dot"></div> Python · SQL · Machine Learning</span>
+    </div>
+  </div>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-primary">View Projects</a>
+    <a href="#contact" class="btn btn-ghost">Say Hello</a>
+  </div>
+  <div class="hero-stamp">AI &<br>Data<br>Science<br>★ 2025 ★</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>About <em>Me</em></h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="about-layout">
+    <div class="about-text">
+      <p>Hi, I'm <strong>Agilan V</strong> — an Artificial Intelligence and Data Science undergraduate at SNS College of Technology, Coimbatore. I have a genuine interest in programming, data analysis, and machine learning concepts.</p>
+      <div class="pullquote">"Seeking opportunities to apply knowledge through projects and continuous learning."</div>
+      <p>I'm currently building foundational skills in Python, SQL, and AI fundamentals. I believe in learning by doing — every project is a chance to bridge the gap between theory and the real world.</p>
+      <p>I bring strong analytical thinking, a collaborative attitude, and a drive to adapt quickly to new challenges and technologies.</p>
+    </div>
+    <div class="about-card">
+      <div class="about-card-title">// Quick Facts</div>
+      <div class="stat-row"><span class="stat-k">Degree</span><span class="stat-v">B.Tech AI & DS</span></div>
+      <div class="stat-row"><span class="stat-k">College</span><span class="stat-v">SNS, Coimbatore</span></div>
+      <div class="stat-row"><span class="stat-k">Batch</span><span class="stat-v">2025 – 2029</span></div>
+      <div class="stat-row"><span class="stat-k">Certs</span><span class="stat-v">13 Certificates</span></div>
+      <div class="stat-row"><span class="stat-k">Status</span><span class="stat-v" style="color:var(--sage)">Available ✓</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>Skills &amp; <em>Tools</em></h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="skills-list">
+    <div class="skill-row">
+      <div class="skill-name">Programming</div>
+      <div class="skill-tools"><span class="pill">Python</span><span class="pill">Java</span><span class="pill">SQL</span></div>
+      <span class="skill-level level-beg">Basic</span>
+    </div>
+    <div class="skill-row">
+      <div class="skill-name">AI & ML Concepts</div>
+      <div class="skill-tools"><span class="pill">AI Fundamentals</span><span class="pill">ML Concepts</span><span class="pill">Data Analysis</span></div>
+      <span class="skill-level level-int">Learning</span>
+    </div>
+    <div class="skill-row">
+      <div class="skill-name">Cloud & GenAI</div>
+      <div class="skill-tools"><span class="pill">AWS</span><span class="pill">Amazon Bedrock</span><span class="pill">LLMs</span></div>
+      <span class="skill-level level-int">Intermediate</span>
+    </div>
+    <div class="skill-row">
+      <div class="skill-name">Tools</div>
+      <div class="skill-tools"><span class="pill">MS Excel</span><span class="pill">Problem Solving</span></div>
+      <span class="skill-level level-int">Intermediate</span>
+    </div>
+    <div class="skill-row">
+      <div class="skill-name">Soft Skills</div>
+      <div class="skill-tools"><span class="pill">Analytical Thinking</span><span class="pill">Team Collaboration</span><span class="pill">Adaptability</span></div>
+      <span class="skill-level level-adv">Strong</span>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATES -->
+<section id="certs">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Certi<em>ficates</em></h2>
+    <div class="section-rule"></div>
+  </div>
+
+  <!-- AWS -->
+  <div class="certs-group">
+    <div class="certs-group-label">Amazon Web Services (AWS)</div>
+    <div class="certs-grid">
+      <div class="cert-card">
+        <span class="cert-issuer">AWS Training & Certification</span>
+        <div class="cert-name">Building Production-Ready AI Agents with Amazon Bedrock AgentCore</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-issuer">AWS Training & Certification</span>
+        <div class="cert-name">AWS Cloud Practitioner Essentials</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-issuer">AWS Academy</span>
+        <div class="cert-name">AWS Academy Graduate — Generative AI Foundations</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-issuer">AWS Academy</span>
+        <div class="cert-name">AWS Academy Graduate — Cloud Foundations</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Databricks -->
+  <div class="certs-group">
+    <div class="certs-group-label">Databricks</div>
+    <div class="certs-grid">
+      <div class="cert-card">
+        <span class="cert-issuer">Databricks</span>
+        <div class="cert-name">Generative AI Solution Development</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-issuer">Databricks</span>
+        <div class="cert-name">Generative AI Application Deployment and Monitoring</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-issuer">Databricks</span>
+        <div class="cert-name">Generative AI Application Development</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-issuer">Databricks</span>
+        <div class="cert-name">Generative AI Application Evaluation and Governance</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-issuer">Databricks</span>
+        <div class="cert-name">Advanced Machine Learning Operations</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IBM -->
+  <div class="certs-group">
+    <div class="certs-group-label">IBM</div>
+    <div class="certs-grid">
+      <div class="cert-card">
+        <span class="cert-issuer">IBM</span>
+        <div class="cert-name">Artificial Intelligence Fundamentals</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-issuer">IBM</span>
+        <div class="cert-name">Enterprise Design Thinking Practitioner</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Others -->
+  <div class="certs-group">
+    <div class="certs-group-label">Others</div>
+    <div class="certs-grid">
+      <div class="cert-card">
+        <span class="cert-issuer">EY & Microsoft</span>
+        <div class="cert-name">AI Skills Passport</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-issuer">Scaler</span>
+        <div class="cert-name">Python and SQL for Data Science</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>Selected <em>Work</em></h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="projects-list">
+    <div class="project-item">
+      <div class="project-index">01</div>
+      <div class="project-content">
+        <h3>Ticket Routing System</h3>
+        <p>Built a Python-based ticket routing system that categorizes and assigns support tickets by issue type and priority level. Implemented user input handling and conditional logic to automate classification workflows, and generated structured output for tracking and managing support requests.</p>
+        <div class="project-chips">
+          <span class="chip-retro">Python</span>
+          <span class="chip-retro">Conditional Logic</span>
+          <span class="chip-retro">Automation</span>
+        </div>
+      </div>
+      <a href="https://github.com/agilan-hub" target="_blank" class="project-arrow">→</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>Get in <em>Touch</em></h2>
+    <div class="section-rule"></div>
+  </div>
+  <div class="contact-layout">
+    <div class="contact-left">
+      <p>Whether you have a project, an internship opportunity, or just want to talk about AI — I'd love to hear from you. My inbox is always open.</p>
+      <a href="/cdn-cgi/l/email-protection#78191f11141916191f11141916494e484f381f15191114561b1715" class="contact-email-link"><span class="__cf_email__" data-cfemail="5332343a3f323d32343a3f323d6265636413343e323a3f7d303c3e">[email&#160;protected]</span></a>
+      <div class="social-grid">
+        <a href="https://github.com/agilan-hub" target="_blank" class="social-link"><span>GitHub — agilan-hub</span><span>↗</span></a>
+        <a href="https://linkedin.com/in/agilan-vv" target="_blank" class="social-link"><span>LinkedIn — agilan-vv</span><span>↗</span></a>
+        <a href="tel:+919080921607" class="social-link"><span>Phone — +91 9080921607</span><span>↗</span></a>
+      </div>
+    </div>
+    <div class="contact-right">
+      <h3>Currently available for</h3>
+      <div class="contact-fact"><strong>Internships</strong> — AI / Data Science / ML roles</div>
+      <div class="contact-fact"><strong>Projects</strong> — Collaboration & open source</div>
+      <div class="contact-fact"><strong>Learning</strong> — Research & knowledge exchange</div>
+      <div class="contact-fact"><strong>Location</strong> — Coimbatore, Tamil Nadu · Remote OK</div>
+    </div>
+  </div>
+</section
